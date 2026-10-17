@@ -371,7 +371,7 @@
       box-shadow: 0 5px 16px rgba(87, 77, 206, .1);
     }
 
-    .answer:focus-visible, .next-button:focus-visible, .restart-button:focus-visible {
+    .answer:focus-visible, .next-button:focus-visible, .restart-button:focus-visible, #result-title:focus {
       outline: 3px solid var(--focus-ring);
       outline-offset: 3px;
       box-shadow: 0 0 0 6px var(--focus-halo);
@@ -599,6 +599,64 @@
       font-size: 14px;
     }
 
+    .result-review {
+      margin: 25px 0 22px;
+      text-align: left;
+    }
+
+    .result-review h3 {
+      margin: 0 0 12px;
+      font-size: 17px;
+      text-align: center;
+    }
+
+    .result-review-list {
+      display: grid;
+      gap: 12px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .result-review-item {
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 13px;
+      background: var(--page);
+    }
+
+    .result-review-question {
+      margin: 0 0 9px;
+      font-size: 14px;
+      font-weight: 750;
+      line-height: 1.55;
+    }
+
+    .result-review-answer {
+      margin: 5px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.55;
+      overflow-wrap: anywhere;
+    }
+
+    .result-review-answer strong { color: var(--ink); }
+    .result-review-answer.is-incorrect strong { color: var(--wrong); }
+    .result-review-answer.is-correct strong { color: var(--correct); }
+
+    .result-review-empty {
+      margin: 0;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 13px;
+      color: var(--muted);
+      background: var(--page);
+      font-size: 14px;
+      text-align: center;
+    }
+
+    .result-review-empty[hidden], .result-review-list[hidden] { display: none; }
+
     .result .restart-button { width: 100%; }
     .result[hidden], .quiz[hidden] { display: none; }
 
@@ -686,9 +744,14 @@
       <div class="result" id="result" aria-labelledby="result-title" hidden>
         <div class="result-emoji" id="result-emoji" aria-hidden="true"></div>
         <p class="eyebrow" id="result-eyebrow">MISSION COMPLETE</p>
-        <h2 id="result-title">ミッション完了！</h2>
+        <h2 id="result-title" tabindex="-1">ミッション完了！</h2>
         <p class="result-score"><strong id="final-score">0</strong> <span>/ 10 問正解</span></p>
         <p class="result-message" id="result-message"></p>
+        <section class="result-review" aria-labelledby="result-review-title">
+          <h3 id="result-review-title">間違えた問題の復習</h3>
+          <p class="result-review-empty" id="result-review-empty" hidden>復習する問題はありません。</p>
+          <ol class="result-review-list" id="result-review-list" aria-labelledby="result-review-title" role="list"></ol>
+        </section>
         <button class="restart-button" id="restart" type="button">もう一度チャレンジ ↻</button>
       </div>
     </section>
@@ -782,12 +845,15 @@
       const finalScore = document.getElementById("final-score");
       const resultEmoji = document.getElementById("result-emoji");
       const resultMessage = document.getElementById("result-message");
+      const resultReviewList = document.getElementById("result-review-list");
+      const resultReviewEmpty = document.getElementById("result-review-empty");
       const announcement = document.getElementById("announcement");
       const restartButton = document.getElementById("restart");
 
       let questionIndex = 0;
       let score = 0;
       let answered = false;
+      const selectedAnswers = Array(questions.length).fill(null);
 
       function renderQuestion() {
         const item = questions[questionIndex];
@@ -833,6 +899,7 @@
         const item = questions[questionIndex];
         const buttons = answersElement.querySelectorAll(".answer");
         const isCorrect = selected === item.correct;
+        selectedAnswers[questionIndex] = selected;
 
         buttons.forEach((button) => {
           button.disabled = true;
@@ -863,6 +930,45 @@
         progress.setAttribute("aria-valuenow", String(questions.length));
         progressFill.style.width = "100%";
 
+        const incorrectAnswers = questions.reduce((incorrect, item, index) => {
+          const selected = selectedAnswers[index];
+          if (selected !== null && selected !== item.correct) incorrect.push({ item, selected });
+          return incorrect;
+        }, []);
+        resultReviewList.replaceChildren();
+        resultReviewEmpty.hidden = incorrectAnswers.length > 0;
+        resultReviewList.hidden = incorrectAnswers.length === 0;
+
+        incorrectAnswers.forEach(({ item, selected }, index) => {
+          const reviewItem = document.createElement("li");
+          reviewItem.className = "result-review-item";
+
+          const question = document.createElement("h4");
+          question.className = "result-review-question";
+          question.textContent = `${index + 1}. ${item.question}`;
+
+          const selectedAnswer = document.createElement("p");
+          selectedAnswer.className = "result-review-answer is-incorrect";
+          const selectedLabel = document.createElement("strong");
+          selectedLabel.textContent = "あなたの回答：";
+          selectedAnswer.append(selectedLabel, document.createTextNode(item.answers[selected]));
+
+          const correctAnswer = document.createElement("p");
+          correctAnswer.className = "result-review-answer is-correct";
+          const correctLabel = document.createElement("strong");
+          correctLabel.textContent = "正解：";
+          correctAnswer.append(correctLabel, document.createTextNode(item.answers[item.correct]));
+
+          const explanation = document.createElement("p");
+          explanation.className = "result-review-answer";
+          const explanationLabel = document.createElement("strong");
+          explanationLabel.textContent = "解説：";
+          explanation.append(explanationLabel, document.createTextNode(item.explanation));
+
+          reviewItem.append(question, selectedAnswer, correctAnswer, explanation);
+          resultReviewList.append(reviewItem);
+        });
+
         result.classList.toggle("is-celebration", score >= 8);
         if (score >= 8) {
           resultEyebrow.textContent = score === 10 ? "PERFECT FLIGHT" : "OUTSTANDING FLIGHT";
@@ -888,7 +994,7 @@
           resultMessage.textContent = "ここからが冒険の始まり。新しい発見を目指して、また挑戦してみよう！";
         }
         announcement.textContent = `ミッション完了。10問中${score}問正解です。`;
-        restartButton.focus();
+        resultTitle.focus();
       }
 
       nextButton.addEventListener("click", () => {
@@ -905,6 +1011,7 @@
       restartButton.addEventListener("click", () => {
         questionIndex = 0;
         score = 0;
+        selectedAnswers.fill(null);
         scoreElement.textContent = "0";
         result.hidden = true;
         quiz.hidden = false;
