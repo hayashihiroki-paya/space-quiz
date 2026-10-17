@@ -634,22 +634,18 @@
 
     .result-review-answer {
       margin: 5px 0 0;
-      color: var(--muted);
+      color: var(--ink);
       font-size: 13px;
       line-height: 1.55;
       overflow-wrap: anywhere;
     }
-
-    .result-review-answer strong { color: var(--ink); }
-    .result-review-answer.is-incorrect strong { color: var(--wrong); }
-    .result-review-answer.is-correct strong { color: var(--correct); }
 
     .result-review-empty {
       margin: 0;
       padding: 14px;
       border: 1px solid var(--line);
       border-radius: 13px;
-      color: var(--muted);
+      color: var(--ink);
       background: var(--page);
       font-size: 14px;
       text-align: center;
@@ -948,13 +944,13 @@
           question.textContent = `${index + 1}. ${item.question}`;
 
           const selectedAnswer = document.createElement("p");
-          selectedAnswer.className = "result-review-answer is-incorrect";
+          selectedAnswer.className = "result-review-answer";
           const selectedLabel = document.createElement("strong");
           selectedLabel.textContent = "あなたの回答：";
           selectedAnswer.append(selectedLabel, document.createTextNode(item.answers[selected]));
 
           const correctAnswer = document.createElement("p");
-          correctAnswer.className = "result-review-answer is-correct";
+          correctAnswer.className = "result-review-answer";
           const correctLabel = document.createElement("strong");
           correctLabel.textContent = "正解：";
           correctAnswer.append(correctLabel, document.createTextNode(item.answers[item.correct]));
