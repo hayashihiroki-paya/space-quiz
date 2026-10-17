@@ -1,0 +1,930 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f4f6fc">
+  <meta name="description" content="太陽系の探査ミッションに挑戦しよう。宇宙探査にまつわる10問のクイズです。">
+  <title>宇宙探査クイズ — ORBITAL</title>
+  <style>
+    :root {
+      color-scheme: light dark;
+      --page: #f4f6fc;
+      --surface: rgba(255, 255, 255, .88);
+      --surface-solid: #fff;
+      --ink: #171a2b;
+      --muted: #72778d;
+      --line: #e7e9f2;
+      --accent: #6257e8;
+      --accent-soft: #efedff;
+      --accent-deep: #463bd0;
+      --correct: #16845e;
+      --correct-bg: #e6f7ef;
+      --wrong: #d84a58;
+      --wrong-bg: #fff0f0;
+      --focus-ring: #4036cc;
+      --focus-halo: rgba(98, 87, 232, .18);
+      --shadow: 0 24px 70px rgba(43, 48, 93, .11), 0 3px 12px rgba(43, 48, 93, .04);
+      --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans JP", "Hiragino Kaku Gothic ProN", Meiryo, sans-serif;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --page: #10111b;
+        --surface: rgba(26, 27, 42, .92);
+        --surface-solid: #1a1b2a;
+        --ink: #f3f2ff;
+        --muted: #a2a3ba;
+        --line: #34354a;
+        --accent: #a39bff;
+        --accent-soft: #302d50;
+        --accent-deep: #c0baff;
+        --correct: #62d7a5;
+        --correct-bg: #19392f;
+        --wrong: #ff8790;
+        --wrong-bg: #44272e;
+        --focus-ring: #d8d3ff;
+        --focus-halo: rgba(163, 155, 255, .28);
+        --shadow: 0 24px 70px rgba(0, 0, 0, .34), 0 3px 12px rgba(0, 0, 0, .15);
+      }
+    }
+
+    * { box-sizing: border-box; }
+
+    html { min-width: 320px; }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      padding: 38px 20px 28px;
+      color: var(--ink);
+      background:
+        radial-gradient(ellipse at 50% -14%, rgba(137, 128, 255, .18), transparent 46%),
+        radial-gradient(circle at 12% 36%, rgba(91, 170, 226, .08) 0 1px, transparent 1.5px),
+        radial-gradient(circle at 87% 65%, rgba(137, 128, 255, .1) 0 1px, transparent 1.5px),
+        var(--page);
+      background-size: auto, 92px 108px, 127px 142px, auto;
+      font-family: var(--sans);
+      font-size: 15px;
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body::before {
+      position: fixed;
+      z-index: 0;
+      inset: -24px;
+      pointer-events: none;
+      background-image:
+        radial-gradient(circle, rgba(137, 128, 255, .34) 0 .7px, transparent 1.15px),
+        radial-gradient(circle, rgba(91, 170, 226, .25) 0 .8px, transparent 1.25px),
+        radial-gradient(circle, rgba(196, 190, 255, .2) 0 .65px, transparent 1.1px);
+      background-position: 13px 28px, 52px 81px, 109px 37px;
+      background-size: 113px 127px, 181px 163px, 257px 229px;
+      content: "";
+      opacity: .72;
+      animation: starfield-drift 100s linear infinite, starfield-glimmer 9s ease-in-out infinite alternate;
+    }
+
+    @keyframes starfield-drift {
+      to { transform: translate3d(-18px, 12px, 0); }
+    }
+
+    @keyframes starfield-glimmer {
+      from { opacity: .48; }
+      to { opacity: .78; }
+    }
+
+    button { font: inherit; }
+
+    .shell {
+      position: relative;
+      z-index: 1;
+      width: min(100%, 520px);
+      margin: 0 auto;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin: 0 3px 19px;
+    }
+
+    .brand {
+      display: inline-flex;
+      gap: 9px;
+      align-items: center;
+      color: var(--ink);
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: .13em;
+    }
+
+    .brand-mark {
+      display: grid;
+      width: 30px;
+      height: 30px;
+      place-items: center;
+      border: 1px solid rgba(111, 101, 228, .16);
+      border-radius: 10px;
+      background: var(--accent-soft);
+      font-size: 17px;
+    }
+
+    .top-note {
+      color: var(--muted);
+      font-size: 12px;
+      letter-spacing: .02em;
+    }
+
+    .card {
+      overflow: hidden;
+      border: 1px solid rgba(127, 131, 165, .15);
+      border-radius: 24px;
+      background: var(--surface);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(14px);
+    }
+
+    .card-inner { padding: 30px 32px 27px; }
+
+    .eyebrow {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 0 0 10px;
+      color: var(--accent);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+    }
+
+    .eyebrow::before {
+      width: 17px;
+      height: 1px;
+      background: currentColor;
+      content: "";
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(25px, 7vw, 32px);
+      font-weight: 800;
+      letter-spacing: -.045em;
+      line-height: 1.35;
+    }
+
+    .intro {
+      margin: 7px 0 24px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .stats {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 9px;
+      font-size: 12px;
+    }
+
+    .question-count { color: var(--muted); }
+    .question-count strong { color: var(--ink); font-size: 13px; }
+
+    .score-pill {
+      display: inline-flex;
+      min-width: 75px;
+      justify-content: center;
+      gap: 5px;
+      padding: 4px 10px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: var(--muted);
+      background: var(--surface-solid);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .score-pill strong { color: var(--accent); }
+
+    .progress-track {
+      height: 6px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: var(--line);
+    }
+
+    .progress-fill {
+      width: 0;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, #8176f1, #5c54df);
+      transition: width .45s cubic-bezier(.2, .8, .25, 1);
+    }
+
+    .question-area {
+      position: relative;
+      overflow: hidden;
+      margin-top: 22px;
+      padding: 17px;
+      border: 1px solid rgba(116, 105, 238, .28);
+      border-radius: 17px;
+      background-color: var(--surface-solid);
+      background-image:
+        radial-gradient(ellipse at 100% 0%, rgba(116, 105, 238, .1), transparent 50%),
+        linear-gradient(rgba(116, 105, 238, .045) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(116, 105, 238, .045) 1px, transparent 1px);
+      background-size: auto, 26px 26px, 26px 26px;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, .35), 0 10px 26px rgba(34, 40, 88, .07);
+    }
+
+    .question-area::before, .question-area::after {
+      position: absolute;
+      pointer-events: none;
+      content: "";
+    }
+
+    .question-area::before {
+      top: 15px;
+      bottom: 15px;
+      left: 0;
+      width: 2px;
+      border-radius: 0 2px 2px 0;
+      background: linear-gradient(180deg, transparent, var(--accent), transparent);
+      opacity: .75;
+    }
+
+    .question-area::after {
+      top: 10px;
+      right: 10px;
+      width: 11px;
+      height: 11px;
+      border-top: 1px solid var(--accent);
+      border-right: 1px solid var(--accent);
+      opacity: .65;
+    }
+
+    .panel-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 13px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid rgba(116, 105, 238, .18);
+      color: var(--accent);
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: .12em;
+      line-height: 1.4;
+    }
+
+    .panel-title, .panel-state {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .panel-reticle {
+      display: grid;
+      width: 19px;
+      height: 19px;
+      place-items: center;
+      border: 1px solid rgba(116, 105, 238, .35);
+      border-radius: 6px;
+      background: var(--accent-soft);
+      font-size: 14px;
+      line-height: 1;
+    }
+
+    .panel-state {
+      color: var(--muted);
+      font-size: 9px;
+      letter-spacing: .08em;
+      white-space: nowrap;
+    }
+
+    .signal-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--correct);
+      box-shadow: 0 0 0 3px var(--correct-bg), 0 0 10px rgba(22, 132, 94, .3);
+    }
+
+    .panel-telemetry {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 0 0 8px;
+      color: var(--muted);
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: .09em;
+      line-height: 1.4;
+    }
+
+    .panel-telemetry .panel-objective {
+      color: var(--accent);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .telemetry-rule {
+      width: 17px;
+      height: 1px;
+      background: rgba(116, 105, 238, .4);
+    }
+
+    .question {
+      margin: 0 0 19px;
+      font-size: 19px;
+      font-weight: 750;
+      letter-spacing: -.025em;
+      line-height: 1.65;
+    }
+
+    .answers {
+      display: grid;
+      gap: 10px;
+    }
+
+    .answer {
+      display: flex;
+      min-height: 54px;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 13px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      color: var(--ink);
+      background: var(--surface-solid);
+      cursor: pointer;
+      text-align: left;
+      transition: border-color .18s ease, background .18s ease, transform .18s ease, box-shadow .18s ease;
+    }
+
+    .answer:hover:not(:disabled) {
+      transform: translateY(-1px);
+      border-color: var(--accent);
+      box-shadow: 0 5px 16px rgba(87, 77, 206, .1);
+    }
+
+    .answer:focus-visible, .next-button:focus-visible, .restart-button:focus-visible {
+      outline: 3px solid var(--focus-ring);
+      outline-offset: 3px;
+      box-shadow: 0 0 0 6px var(--focus-halo);
+    }
+
+    .question:focus {
+      border-radius: 4px;
+      outline: 2px solid var(--focus-ring);
+      outline-offset: 6px;
+    }
+
+    .answer:disabled { cursor: default; }
+
+    .answer-key {
+      display: grid;
+      width: 29px;
+      height: 29px;
+      flex: 0 0 29px;
+      place-items: center;
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      color: var(--muted);
+      background: var(--page);
+      font-size: 12px;
+      font-weight: 750;
+      transition: inherit;
+    }
+
+    .answer-text { font-size: 14px; font-weight: 600; line-height: 1.55; }
+
+    .answer.is-correct {
+      border-color: var(--correct);
+      color: var(--correct);
+      background: var(--correct-bg);
+    }
+
+    .answer.is-correct .answer-key {
+      border-color: transparent;
+      color: white;
+      background: var(--correct);
+    }
+
+    .answer.is-wrong {
+      border-color: var(--wrong);
+      color: var(--wrong);
+      background: var(--wrong-bg);
+      animation: shake .38s ease-in-out;
+    }
+
+    .answer.is-wrong .answer-key {
+      border-color: transparent;
+      color: white;
+      background: var(--wrong);
+    }
+
+    .answer.is-reveal {
+      border-color: var(--correct);
+      color: var(--correct);
+      background: var(--correct-bg);
+    }
+
+    .answer.is-reveal .answer-key {
+      border-color: transparent;
+      color: white;
+      background: var(--correct);
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-5px); }
+      40%, 80% { transform: translateX(5px); }
+    }
+
+    .feedback {
+      display: flex;
+      min-height: 57px;
+      align-items: flex-start;
+      gap: 9px;
+      margin-top: 14px;
+      padding: 10px 12px;
+      border: 1px solid rgba(116, 105, 238, .12);
+      border-left: 2px solid var(--accent);
+      border-radius: 12px;
+      color: var(--muted);
+      background: var(--page);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .feedback[hidden] { display: none; }
+    .feedback-mark { font-size: 16px; line-height: 1.4; }
+    .feedback strong { color: var(--ink); }
+
+    .actions {
+      display: flex;
+      min-height: 50px;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 12px;
+      padding-top: 16px;
+    }
+
+    .keyboard-hint { color: var(--muted); font-size: 11px; }
+
+    .next-button, .restart-button {
+      min-height: 43px;
+      padding: 0 17px;
+      border: 0;
+      border-radius: 12px;
+      color: #fff;
+      background: #5d54df;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 750;
+      transition: transform .18s ease, background .18s ease, opacity .18s ease;
+    }
+
+    .next-button:hover:not(:disabled), .restart-button:hover {
+      transform: translateY(-1px);
+      background: #4940ca;
+    }
+
+    .next-button:disabled { opacity: .42; cursor: not-allowed; }
+
+    .footer {
+      margin: 16px 5px 0;
+      color: var(--muted);
+      font-size: 11px;
+      text-align: center;
+    }
+
+    .result {
+      position: relative;
+      isolation: isolate;
+      padding: 34px 32px 31px;
+      text-align: center;
+      animation: rise-in .45s ease both;
+    }
+
+    .result > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    .result.is-celebration {
+      background: radial-gradient(ellipse at 50% 0%, var(--accent-soft), transparent 72%);
+    }
+
+    .result.is-celebration::before {
+      position: absolute;
+      z-index: 0;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        radial-gradient(circle at 9% 18%, rgba(244, 177, 63, .82) 0 2px, transparent 3px),
+        radial-gradient(circle at 89% 15%, rgba(89, 190, 224, .78) 0 2px, transparent 3px),
+        radial-gradient(circle at 15% 73%, rgba(230, 112, 169, .72) 0 2px, transparent 3px),
+        radial-gradient(circle at 86% 76%, rgba(88, 190, 140, .78) 0 2px, transparent 3px),
+        radial-gradient(circle at 29% 9%, rgba(137, 128, 255, .76) 0 1.5px, transparent 2.5px),
+        radial-gradient(circle at 73% 89%, rgba(244, 177, 63, .68) 0 1.5px, transparent 2.5px);
+      content: "";
+      opacity: .65;
+      animation: celebration-sparkle 5s ease-in-out infinite alternate;
+    }
+
+    @keyframes celebration-sparkle {
+      from { transform: translateY(-3px); opacity: .38; }
+      to { transform: translateY(3px); opacity: .72; }
+    }
+
+    @keyframes rise-in {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .result-emoji {
+      display: grid;
+      width: 86px;
+      height: 86px;
+      margin: 4px auto 16px;
+      place-items: center;
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      background: var(--accent-soft);
+      font-size: 45px;
+      animation: float 2.8s ease-in-out infinite;
+    }
+
+    .result.is-celebration .result-emoji {
+      border-color: rgba(116, 105, 238, .35);
+      box-shadow: 0 0 0 7px rgba(116, 105, 238, .08), 0 12px 32px rgba(116, 105, 238, .18);
+      animation: celebration-pop .6s cubic-bezier(.2, .8, .25, 1) both, float 2.8s ease-in-out .6s infinite;
+    }
+
+    @keyframes celebration-pop {
+      from { transform: scale(.76) rotate(-8deg); }
+      72% { transform: scale(1.08) rotate(3deg); }
+      to { transform: scale(1) rotate(0); }
+    }
+
+    @keyframes float {
+      50% { transform: translateY(-5px) rotate(2deg); }
+    }
+
+    .result .eyebrow { justify-content: center; margin-bottom: 6px; }
+    .result .eyebrow::before { display: none; }
+    .result h2 { margin: 0; font-size: 25px; letter-spacing: -.035em; }
+
+    .result-score {
+      margin: 10px 0 0;
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    .result-score strong {
+      color: var(--accent);
+      font-size: 34px;
+      letter-spacing: -.05em;
+    }
+
+    .result-message {
+      max-width: 330px;
+      margin: 8px auto 23px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .result .restart-button { width: 100%; }
+    .result[hidden], .quiz[hidden] { display: none; }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      clip-path: inset(50%);
+    }
+
+    @media (max-width: 480px) {
+      body { padding: 23px 14px 20px; }
+      .topbar { margin: 0 2px 14px; }
+      .card { border-radius: 21px; }
+      .card-inner { padding: 24px 20px 22px; }
+      .intro { margin-bottom: 21px; }
+      .question-area { margin-top: 19px; padding: 14px 13px 13px; }
+      .panel-head { margin-bottom: 11px; padding-bottom: 9px; }
+      .panel-state { font-size: 8px; }
+      .panel-telemetry { gap: 6px; font-size: 8px; }
+      .question { font-size: 18px; }
+      .answer { min-height: 52px; }
+      .result { padding: 30px 21px 24px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      body::before { animation: none; }
+      .result.is-celebration::before { animation: none; }
+
+      *, *::before, *::after {
+        scroll-behavior: auto !important;
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .01ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header class="topbar">
+      <div class="brand"><span class="brand-mark" aria-hidden="true">✦</span> ORBITAL</div>
+      <span class="top-note">ミッション・ブリーフィング</span>
+    </header>
+
+    <section class="card" aria-label="宇宙探査クイズ">
+      <div class="quiz card-inner" id="quiz">
+        <p class="eyebrow">SPACE EXPLORATION QUIZ</p>
+        <h1>宇宙探査クイズ</h1>
+        <p class="intro">太陽系のミッションに挑戦。全10問、あなたは何問わかる？</p>
+
+        <div class="stats">
+          <span class="question-count">QUESTION <strong id="current-number">01</strong> <span aria-hidden="true">/</span> 10</span>
+          <span class="score-pill" aria-label="現在のスコア"><span aria-hidden="true">✦</span> SCORE <strong id="score">0</strong></span>
+        </div>
+        <div class="progress-track" role="progressbar" aria-label="クイズの進行状況" aria-valuemin="0" aria-valuemax="10" aria-valuenow="0" id="progress">
+          <div class="progress-fill" id="progress-fill"></div>
+        </div>
+
+        <div class="question-area" id="question-area">
+          <div class="panel-head" aria-hidden="true">
+            <div class="panel-title"><span class="panel-reticle">+</span>MISSION CONTROL</div>
+            <div class="panel-state"><span class="signal-dot"></span>SIGNAL LINK · STABLE</div>
+          </div>
+          <div class="panel-telemetry" aria-hidden="true">
+            <span>OBJECTIVE</span><span class="panel-objective" id="panel-objective">Q-01</span>
+            <span class="telemetry-rule"></span><span>DEEP SPACE ARCHIVE</span>
+          </div>
+          <h2 class="question" id="question" tabindex="-1"></h2>
+          <div class="answers" id="answers" role="group" aria-labelledby="question"></div>
+          <div class="feedback" id="feedback" role="status" aria-live="polite" hidden>
+            <span class="feedback-mark" id="feedback-mark" aria-hidden="true"></span>
+            <span id="feedback-text"></span>
+          </div>
+        </div>
+        <div class="actions">
+          <span class="keyboard-hint" id="keyboard-hint">1〜4で回答 · Tab / Enterで進む</span>
+          <button class="next-button" id="next" type="button" disabled>回答を選んでください</button>
+        </div>
+      </div>
+
+      <div class="result" id="result" aria-labelledby="result-title" hidden>
+        <div class="result-emoji" id="result-emoji" aria-hidden="true"></div>
+        <p class="eyebrow" id="result-eyebrow">MISSION COMPLETE</p>
+        <h2 id="result-title">ミッション完了！</h2>
+        <p class="result-score"><strong id="final-score">0</strong> <span>/ 10 問正解</span></p>
+        <p class="result-message" id="result-message"></p>
+        <button class="restart-button" id="restart" type="button">もう一度チャレンジ ↻</button>
+      </div>
+    </section>
+
+    <p class="footer">ひとつずつ、未知の宇宙へ。 ✨</p>
+    <p class="sr-only" id="announcement" aria-live="polite"></p>
+  </main>
+
+  <script>
+    (() => {
+      "use strict";
+
+      const questions = [
+        {
+          question: "人類初の人工衛星「スプートニク1号」を打ち上げた国は？",
+          answers: ["アメリカ", "ソビエト連邦", "日本", "フランス"],
+          correct: 1,
+          explanation: "1957年、ソビエト連邦がスプートニク1号を打ち上げ、宇宙時代の幕が開きました。"
+        },
+        {
+          question: "火星に着陸して、初めて地表の写真を地球へ送った探査機は？",
+          answers: ["マリナー4号", "バイキング1号", "パスファインダー", "キュリオシティ"],
+          correct: 1,
+          explanation: "バイキング1号は1976年に火星へ着陸。火星表面から初めて画像を送信しました。"
+        },
+        {
+          question: "太陽系の惑星のうち、現在も地表を探査するローバーが活動しているのは？",
+          answers: ["金星", "木星", "火星", "水星"],
+          correct: 2,
+          explanation: "火星ではNASAの探査車パーサヴィアランスなどが、岩石や過去の生命の痕跡を調べています。"
+        },
+        {
+          question: "ボイジャー1号・2号が太陽圏の外へ出たあとに進んでいる領域は？",
+          answers: ["カイパーベルト", "オールトの雲", "星間空間", "銀河中心"],
+          correct: 2,
+          explanation: "両機は太陽風が支配する太陽圏を脱出し、太陽系外の星間空間を飛行中です。"
+        },
+        {
+          question: "NASAの探査機「はやぶさ2」がサンプルを持ち帰った小惑星は？",
+          answers: ["イトカワ", "ベンヌ", "リュウグウ", "エロス"],
+          correct: 2,
+          explanation: "はやぶさ2は小惑星リュウグウの試料を採取し、2020年に地球へ届けました。"
+        },
+        {
+          question: "木星の衛星エウロパが、生命探査の候補として注目される理由は？",
+          answers: ["地表に液体の湖がある", "氷の下に海がある可能性が高い", "酸素の大気がある", "火山が現在も噴火している"],
+          correct: 1,
+          explanation: "厚い氷殻の下に液体の海があると考えられ、生命に適した環境か調査が進んでいます。"
+        },
+        {
+          question: "月面に人類が初めて着陸したアポロ計画のミッションは？",
+          answers: ["アポロ8号", "アポロ10号", "アポロ11号", "アポロ13号"],
+          correct: 2,
+          explanation: "1969年のアポロ11号で、ニール・アームストロングとバズ・オルドリンが月面に降り立ちました。"
+        },
+        {
+          question: "土星の環を間近で調べ、土星の大気圏へ突入して任務を終えた探査機は？",
+          answers: ["ジュノー", "ガリレオ", "カッシーニ", "ニュー・ホライズンズ"],
+          correct: 2,
+          explanation: "カッシーニは13年にわたり土星系を探査し、2017年に土星へ突入しました。"
+        },
+        {
+          question: "冥王星を初めて間近から撮影した探査機「ニュー・ホライズンズ」が通過した年は？",
+          answers: ["2005年", "2010年", "2015年", "2020年"],
+          correct: 2,
+          explanation: "2015年7月、ニュー・ホライズンズが冥王星に最接近し、詳細な地表画像を送りました。"
+        },
+        {
+          question: "ジェイムズ・ウェッブ宇宙望遠鏡が主に観測する光の種類は？",
+          answers: ["電波", "赤外線", "紫外線", "X線"],
+          correct: 1,
+          explanation: "ウェッブ望遠鏡は主に赤外線で観測し、遠方の初期宇宙や星の誕生を探ります。"
+        }
+      ];
+
+      const quiz = document.getElementById("quiz");
+      const questionElement = document.getElementById("question");
+      const panelObjective = document.getElementById("panel-objective");
+      const answersElement = document.getElementById("answers");
+      const feedback = document.getElementById("feedback");
+      const feedbackMark = document.getElementById("feedback-mark");
+      const feedbackText = document.getElementById("feedback-text");
+      const currentNumber = document.getElementById("current-number");
+      const scoreElement = document.getElementById("score");
+      const progress = document.getElementById("progress");
+      const progressFill = document.getElementById("progress-fill");
+      const nextButton = document.getElementById("next");
+      const result = document.getElementById("result");
+      const resultEyebrow = document.getElementById("result-eyebrow");
+      const resultTitle = document.getElementById("result-title");
+      const finalScore = document.getElementById("final-score");
+      const resultEmoji = document.getElementById("result-emoji");
+      const resultMessage = document.getElementById("result-message");
+      const announcement = document.getElementById("announcement");
+      const restartButton = document.getElementById("restart");
+
+      let questionIndex = 0;
+      let score = 0;
+      let answered = false;
+
+      function renderQuestion() {
+        const item = questions[questionIndex];
+        answered = false;
+        currentNumber.textContent = String(questionIndex + 1).padStart(2, "0");
+        panelObjective.textContent = `Q-${String(questionIndex + 1).padStart(2, "0")}`;
+        questionElement.textContent = item.question;
+        answersElement.replaceChildren();
+        feedback.hidden = true;
+        feedbackMark.textContent = "";
+        feedbackText.textContent = "";
+        nextButton.disabled = true;
+        nextButton.textContent = "回答を選んでください";
+        progress.setAttribute("aria-valuenow", String(questionIndex + 1));
+        progressFill.style.width = `${(questionIndex + 1) / questions.length * 100}%`;
+
+        item.answers.forEach((answer, index) => {
+          const button = document.createElement("button");
+          button.className = "answer";
+          button.type = "button";
+          button.dataset.answer = String(index);
+          button.setAttribute("aria-label", `${index + 1}、${answer}`);
+          button.setAttribute("aria-keyshortcuts", String(index + 1));
+
+          const key = document.createElement("span");
+          key.className = "answer-key";
+          key.setAttribute("aria-hidden", "true");
+          key.textContent = String(index + 1);
+
+          const text = document.createElement("span");
+          text.className = "answer-text";
+          text.textContent = answer;
+
+          button.append(key, text);
+          button.addEventListener("click", () => chooseAnswer(index));
+          answersElement.append(button);
+        });
+      }
+
+      function chooseAnswer(selected) {
+        if (answered) return;
+        answered = true;
+        const item = questions[questionIndex];
+        const buttons = answersElement.querySelectorAll(".answer");
+        const isCorrect = selected === item.correct;
+
+        buttons.forEach((button) => {
+          button.disabled = true;
+          const answerIndex = Number(button.dataset.answer);
+          if (answerIndex === item.correct) button.classList.add("is-correct");
+          else if (answerIndex === selected) button.classList.add("is-wrong");
+        });
+
+        if (isCorrect) score += 1;
+        scoreElement.textContent = String(score);
+        feedback.hidden = false;
+        feedbackMark.textContent = isCorrect ? "✦" : "↗";
+        feedbackText.replaceChildren();
+
+        const verdict = document.createElement("strong");
+        verdict.textContent = isCorrect ? "正解！ " : "おしい！ ";
+        feedbackText.append(verdict, document.createTextNode(item.explanation));
+        nextButton.disabled = false;
+        nextButton.textContent = questionIndex === questions.length - 1 ? "結果を見る" : "次の問題へ →";
+        announcement.textContent = isCorrect ? "正解です。" : `不正解です。正解は${item.answers[item.correct]}。`;
+        nextButton.focus();
+      }
+
+      function showResult() {
+        quiz.hidden = true;
+        result.hidden = false;
+        finalScore.textContent = String(score);
+        progress.setAttribute("aria-valuenow", String(questions.length));
+        progressFill.style.width = "100%";
+
+        result.classList.toggle("is-celebration", score >= 8);
+        if (score >= 8) {
+          resultEyebrow.textContent = score === 10 ? "PERFECT FLIGHT" : "OUTSTANDING FLIGHT";
+          resultTitle.textContent = score === 10 ? "パーフェクト！" : "ミッション大成功！";
+          resultEmoji.textContent = score === 10 ? "🚀" : "🌠";
+          resultMessage.textContent = score === 10
+            ? "パーフェクト！きみは宇宙探査のエキスパート。次のミッションも待ちきれないね！"
+            : "見事な探査成果！宇宙のことをよく知っているね。次のミッションも楽しみ！";
+        } else if (score >= 7) {
+          resultEyebrow.textContent = "MISSION COMPLETE";
+          resultTitle.textContent = "ミッション完了！";
+          resultEmoji.textContent = "🪐";
+          resultMessage.textContent = "すばらしい探査結果！宇宙のことをよく知っているね。";
+        } else if (score >= 4) {
+          resultEyebrow.textContent = "MISSION COMPLETE";
+          resultTitle.textContent = "ミッション完了！";
+          resultEmoji.textContent = "🌙";
+          resultMessage.textContent = "いい調子！まだまだ宇宙には面白い発見がいっぱい。";
+        } else {
+          resultEyebrow.textContent = "MISSION COMPLETE";
+          resultTitle.textContent = "ミッション完了！";
+          resultEmoji.textContent = "🌟";
+          resultMessage.textContent = "ここからが冒険の始まり。新しい発見を目指して、また挑戦してみよう！";
+        }
+        announcement.textContent = `ミッション完了。10問中${score}問正解です。`;
+        restartButton.focus();
+      }
+
+      nextButton.addEventListener("click", () => {
+        if (!answered) return;
+        if (questionIndex === questions.length - 1) {
+          showResult();
+          return;
+        }
+        questionIndex += 1;
+        renderQuestion();
+        questionElement.focus();
+      });
+
+      restartButton.addEventListener("click", () => {
+        questionIndex = 0;
+        score = 0;
+        scoreElement.textContent = "0";
+        result.hidden = true;
+        quiz.hidden = false;
+        renderQuestion();
+        questionElement.focus();
+      });
+
+      document.addEventListener("keydown", (event) => {
+        if (quiz.hidden || event.altKey || event.ctrlKey || event.metaKey) return;
+        if (/^[1-4]$/.test(event.key) && !answered) {
+          const target = answersElement.querySelectorAll(".answer")[Number(event.key) - 1];
+          if (target) {
+            event.preventDefault();
+            target.click();
+          }
+        }
+      });
+
+      renderQuestion();
+    })();
+  </script>
+</body>
+</html>
